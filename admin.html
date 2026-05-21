@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - Kedai Mamayu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <h4 class="fw-bold text-center my-3 text-white">Mamayu Admin</h4>
+        <hr class="text-white opacity-25">
+        <a href="#" class="active"><i class="fas fa-shopping-cart me-2"></i>Monitor Orderan</a>
+    </div>
+
+    <div class="main-content">
+        <h2 class="fw-bold mb-4">Monitor Antrean Dapur & Pendapatan</h2>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card stat-card p-3 border-start border-primary border-4 position-relative shadow-sm bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 fw-bold">Total Pendapatan Bersih</p>
+                            <h3 class="fw-bold text-success mb-0" id="statIncome">Rp 0</h3>
+                        </div>
+                        <i class="fas fa-wallet fa-2x text-primary opacity-25"></i>
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary position-absolute bottom-0 end-0 m-2 py-0 px-1" style="font-size: 0.65rem;" onclick="resetIncome()">
+                        <i class="fas fa-sync-alt me-1"></i>Reset Pendapatan
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card p-3 border-start border-warning border-4 shadow-sm bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 fw-bold">Total Antrean Masuk</p>
+                            <h3 class="fw-bold mb-0" id="statOrders">0 Order</h3>
+                        </div>
+                        <i class="fas fa-clock fa-2x text-warning opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card p-3 border-start border-success border-4 shadow-sm bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 fw-bold">Total Menu di Etalase</p>
+                            <h3 class="fw-bold text-success mb-0" id="statMenus">0 Items</h3>
+                        </div>
+                        <i class="fas fa-hamburger fa-2x text-success opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h5 class="fw-bold mb-3 text-dark"><i class="fas fa-list text-danger me-2"></i>Daftar Order Masuk</h5>
+        <div class="table-responsive shadow-sm bg-white p-3 rounded mb-5">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">ID Nota</th>
+                        <th>Nama Akun</th>
+                        <th>Ringkasan Pesanan</th>
+                        <th>Total Bayar</th>
+                        <th>Status</th>
+                        <th>Aksi Kasir</th>
+                    </tr>
+                </thead>
+                <tbody id="adminOrderTable"></tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold text-dark m-0"><i class="fas fa-hamburger text-danger me-2"></i>Pengaturan Produk</h5>
+            <button class="btn btn-primary-custom text-white fw-bold rounded-pill px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#addMenuModal">
+                <i class="fas fa-plus-circle me-1"></i> Tambah Produk Baru
+            </button>
+        </div>
+
+        <div class="table-responsive shadow-sm bg-white p-3 rounded">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Foto</th>
+                        <th>Nama Menu</th>
+                        <th>Kategori</th>
+                        <th>Harga</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="adminMenuTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-hidden="true"></div>
+
+    <div class="modal fade" id="addMenuModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-plus-circle me-2 text-primary"></i>Tambah Produk Baru</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="addMenuForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Nama Menu / Produk</label>
+                            <input type="text" id="menuName" class="form-control" placeholder="Contoh: Seblak Tulang Pedas" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Harga Jual (Rp)</label>
+                            <input type="number" id="menuPrice" class="form-control" placeholder="Contoh: 15000" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Kategori Menu</label>
+                            <select id="menuCategory" class="form-select" required>
+                                <option value="" disabled selected>-- Pilih Kategori --</option>
+                                <option value="Makanan">Makanan</option>
+                                <option value="Minuman">Minuman</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">URL Link Foto Produk</label>
+                            <input type="text" id="menuImg" class="form-control" placeholder="Masukkan link gambar atau kosongkan">
+                        </div>
+                    </div>
+                    <div class="modal-footer py-2">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary-custom text-white btn-sm px-3 fw-bold">Simpan ke Etalase</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editMenuModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-edit me-2 text-warning"></i>Edit Detail Produk</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editMenuForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="editMenuId">
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Nama Menu</label>
+                            <input type="text" id="editMenuName" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Harga (Rp)</label>
+                            <input type="number" id="editMenuPrice" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Kategori</label>
+                            <select id="editMenuCategory" class="form-select" required>
+                                <option value="Makanan">Makanan</option>
+                                <option value="Minuman">Minuman</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Link Foto Produk</label>
+                            <input type="text" id="editMenuImg" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer py-2">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary btn-sm px-3 fw-bold">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
